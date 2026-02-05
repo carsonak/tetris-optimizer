@@ -10,4 +10,6 @@ func main() {
 		fmt.Fprintf(os.Stderr, "ERROR: %s tetromino_file", os.Args[0])
 		os.Exit(1)
 	}
+
+	
 }
