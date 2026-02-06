@@ -1,6 +1,9 @@
 package tetro
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 type Point struct {
 	X, Y int
@@ -13,33 +16,62 @@ type Tetromino struct {
 	ID     rune     // The character to print (A, B, C...)
 }
 
+func countNeighbors(pos Point, rawTetromino [4][4]rune) int {
+	neighbors := 0
+
+	if pos.X > 0 && rawTetromino[pos.Y][pos.X-1] == '#' { // check left
+		neighbors++
+	}
+
+	if pos.X < len(rawTetromino[pos.Y])-1 && rawTetromino[pos.Y][pos.X+1] == '#' { // check right
+		neighbors++
+	}
+
+	if pos.Y > 0 && rawTetromino[pos.Y-1][pos.X] == '#' { // check down
+		neighbors++
+	}
+
+	if pos.Y < len(rawTetromino)-1 && rawTetromino[pos.Y+1][pos.X] == '#' { // check up
+		neighbors++
+	}
+
+	return neighbors
+}
+
 func Init(id rune, rawTetromino [4][4]rune) (Tetromino, error) {
 	var tet Tetromino
-	tetI := 0
+	tetroBlocks := 0
 
 	// Bottom left corner in 4x4 grid is the Origin.
-	for row := len(rawTetromino) - 1; row >= 0; row-- {
-		for col := len(rawTetromino[row]); col >= 0; col-- {
-			if rawTetromino[row][col] == '#' {
-				if tetI >= 4 {
-					return Tetromino{}, errors.New("Tetromino should only have 4 pieces.")
+	for y, row := range rawTetromino {
+		for x, char := range row {
+			switch char {
+			case ' ':
+				continue
+			case '#':
+				if tetroBlocks >= 4 {
+					return Tetromino{}, errors.New("Tetromino should have 4 blocks.")
 				}
 
-				tet.Pos[tetI] = Point{row, col}
+				pos := Point{x, y}
+				neighbors := countNeighbors(pos, rawTetromino)
 
-				// if tetI > 0 {
-				// 	currPos := tet.Pos[tetI]
-				// 	prevPos := tet.Pos[tetI-1]
+				if neighbors < 1 || neighbors > 3 {
+					return Tetromino{}, errors.New("invalid Tetromino")
+				}
 
-				//     if prevPos.X != currPos.X-1 && prevPos.Y != currPos.Y-1 {
-				//         return  Tetromino{}, errors.New("")
-				//     }
-				// }
-
-				tetI++
+				tet.Pos[tetroBlocks] = pos
+				tetroBlocks++
+			default:
+				return Tetromino{}, fmt.Errorf("unrecognised character '%c'", char)
 			}
 		}
 	}
+
+	if tetroBlocks != 4 {
+		return Tetromino{}, errors.New("Tetromino should have 4 blocks")
+	}
+
 	return tet, nil
 }
 
