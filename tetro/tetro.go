@@ -11,9 +11,9 @@ type Point struct {
 
 type Tetromino struct {
 	Pos    [4]Point // The relative coordinates of the 4 blocks
-	Width  int      // Max X - Min X + 1
-	Height int      // Max Y - Min Y + 1
-	ID     rune     // The character to print (A, B, C...)
+	Width  int
+	Height int
+	ID     rune // The character to print (A, B, C...)
 }
 
 func countNeighbors(pos Point, rawTetromino [4][4]rune) int {
@@ -93,7 +93,7 @@ func (t *Tetromino) Normalize() {
 
 	maxX, maxY := 0, 0
 
-	// Shift all points to bottom-left (0,0)
+	// Shift tetromino onto the axes
 	for i := range t.Pos {
 		t.Pos[i].X -= minX
 		t.Pos[i].Y -= minY
@@ -110,4 +110,9 @@ func (t *Tetromino) Normalize() {
 
 	t.Width = maxX + 1
 	t.Height = maxY + 1
+
+	// Shift Tetromino to 4th Quadrant
+	for i := range t.Pos {
+		t.Pos[i].Y -= t.Height
+	}
 }
