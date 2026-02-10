@@ -3,15 +3,20 @@ package main
 import (
 	"bufio"
 	"errors"
+	"tetris-optimiser/tetromino"
 )
 
-func ParseTetrominoStream(scanner *bufio.Scanner) (output [][4][4]rune, err error) {
+func ParseTetrominoStream(scanner *bufio.Scanner) (output []tetromino.Raw, err error) {
+	if scanner == nil {
+		return nil, errors.New("scanner should not be nil")
+	}
+
 	rowCount := 0
-	rawTetromino := [4][4]rune{}
+	tet := tetromino.Raw{}
 
 	for scanner.Scan() {
 		if rowCount > 3 {
-			output = append(output, rawTetromino)
+			output = append(output, tet)
 			rowCount = 0
 		}
 
@@ -29,7 +34,7 @@ func ParseTetrominoStream(scanner *bufio.Scanner) (output [][4][4]rune, err erro
 			return nil, errors.New("invalid file format; Tetromino should have 4 columns")
 		}
 
-		copy(rawTetromino[rowCount][:], []rune(line))
+		copy(tet[rowCount][:], []rune(line))
 		rowCount++
 	}
 
