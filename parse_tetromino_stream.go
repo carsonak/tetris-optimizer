@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"errors"
+
 	"tetris-optimiser/tetromino"
 )
 
@@ -40,6 +41,15 @@ func ParseTetrominoStream(scanner *bufio.Scanner) (output []tetromino.Raw, err e
 
 	if scanner.Err() != nil {
 		return nil, scanner.Err()
+	}
+
+	if rowCount == 4 {
+		output = append(output, tet)
+		rowCount = 0
+	}
+
+	if rowCount != 0 {
+		return nil, errors.New("invalid file format; Tetromino should have 4 rows")
 	}
 
 	return
