@@ -110,13 +110,16 @@ func TestParseTetrominoStream(t *testing.T) {
 				} else if err.Error() != tt.expectedMsg && tt.expectedMsg != "" {
 					t.Errorf("expected error %q, got %q", tt.expectedMsg, err.Error())
 				}
-			} else {
-				if err != nil {
-					t.Errorf("unexpected error: %v", err)
-				}
-				if !reflect.DeepEqual(output, tt.expected) {
-					t.Errorf("expected output:\n%+q\ngot:\n%+q", tt.expected, output)
-				}
+
+				return
+			}
+
+			if err != nil {
+				t.Errorf("unexpected error: %v", err)
+			}
+
+			if !reflect.DeepEqual(output, tt.expected) {
+				t.Errorf("expected output:\n%+q\ngot:\n%+q", tt.expected, output)
 			}
 		})
 	}

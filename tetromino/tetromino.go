@@ -5,18 +5,22 @@ import (
 	"fmt"
 )
 
+// Unverified tetromino on a 4x4 grid
 type Raw [4][4]rune
 
 type Point struct {
 	X, Y int
 }
 
+// Internal representation of a tetromino piece
 type Piece struct {
 	Pos    [4]Point // The relative coordinates of the 4 blocks
 	Width  int
 	Height int
 	ID     rune // The character to print (A, B, C...)
 }
+
+//////////////////// STATIC FUNCTIONS ////////////////////
 
 func countNeighbors(pos Point, tet Raw) int {
 	neighbors := 0
@@ -40,11 +44,57 @@ func countNeighbors(pos Point, tet Raw) int {
 	return neighbors
 }
 
+//////////////////// PRIVATE FUNCTIONS ////////////////////
+
+// Helper to adjust tetromino position to the bottom left.
+// This would be called after you parse the raw '#' positions
+func (t *Piece) normalize() {
+	minX, minY := t.Pos[0].X, t.Pos[0].Y
+
+	// Find offsets from the X and Y axes.
+	for _, p := range t.Pos {
+		if p.X < minX {
+			minX = p.X
+		}
+
+		if p.Y < minY {
+			minY = p.Y
+		}
+	}
+
+	maxX, maxY := 0, 0
+
+	// Shift edges of the tetromino onto the axes
+	for i := range t.Pos {
+		t.Pos[i].X -= minX
+		t.Pos[i].Y -= minY
+
+		if t.Pos[i].X > maxX {
+			maxX = t.Pos[i].X
+		}
+
+		if t.Pos[i].Y > maxY {
+			maxY = t.Pos[i].Y
+		}
+	}
+
+	t.Width = maxX + 1
+	t.Height = maxY + 1
+
+	// Shift Piece to 4th Quadrant of cartesian plane
+	for i := range t.Pos {
+		t.Pos[i].Y -= t.Height
+	}
+}
+
+//////////////////// PUBLIC FUNCTIONS ////////////////////
+
 func Init(rawTet Raw, id rune) (Piece, error) {
 	var tet Piece
 	tetroBlocks := 0
 
-	// Bottom left corner in 4x4 grid is the Origin.
+	// Assume the 4x4 grid is the 1st Quadrant of a cartesian plane,
+	// bottom-left corner of the grid is the origin.
 	for y, row := range rawTet {
 		for x, char := range row {
 			switch char {
@@ -74,47 +124,7 @@ func Init(rawTet Raw, id rune) (Piece, error) {
 		return Piece{}, errors.New("Piece should have 4 blocks")
 	}
 
+	tet.ID = id
+	tet.normalize()
 	return tet, nil
-}
-
-// Helper to adjust tetromino position to the bottom left.
-// This would be called after you parse the raw '#' positions
-func (t *Piece) Normalize() {
-	minX, minY := t.Pos[0].X, t.Pos[0].Y
-
-	// Find offsets from the X and Y axes.
-	for _, p := range t.Pos {
-		if p.X < minX {
-			minX = p.X
-		}
-
-		if p.Y < minY {
-			minY = p.Y
-		}
-	}
-
-	maxX, maxY := 0, 0
-
-	// Shift tetromino onto the axes
-	for i := range t.Pos {
-		t.Pos[i].X -= minX
-		t.Pos[i].Y -= minY
-
-		// Track max dimensions for Width/Height calculation
-		if t.Pos[i].X > maxX {
-			maxX = t.Pos[i].X
-		}
-
-		if t.Pos[i].Y > maxY {
-			maxY = t.Pos[i].Y
-		}
-	}
-
-	t.Width = maxX + 1
-	t.Height = maxY + 1
-
-	// Shift Piece to 4th Quadrant
-	for i := range t.Pos {
-		t.Pos[i].Y -= t.Height
-	}
 }
