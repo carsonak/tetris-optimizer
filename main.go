@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"os"
 
-	"tetris-optimiser/tetromino"
+	"tetris-optimiser/tetris"
 )
 
-func initTetrominoPieces(rawTetrominoes []tetromino.Raw) ([]tetromino.Piece, error) {
-	var tetrominoes []tetromino.Piece
+func initTetrominoPieces(rawTetrominoes []tetris.RawPiece) ([]tetris.Piece, error) {
+	var tetrominoes []tetris.Piece
 
 	for i, t := range rawTetrominoes {
 		id := rune('A' + i)
@@ -19,7 +19,7 @@ func initTetrominoPieces(rawTetrominoes []tetromino.Raw) ([]tetromino.Piece, err
 			return nil, errors.New("ERROR: cannot process more than 26 tetrominoes")
 		}
 
-		piece, err := tetromino.Init(t, id)
+		piece, err := tetris.Init(t, id)
 		if err != nil {
 			return nil, err
 		}
@@ -49,8 +49,10 @@ func main() {
 		os.Exit(1)
 	}
 
-	_, err = initTetrominoPieces(rawTetrominoes)
+	tetrominoes, err := initTetrominoPieces(rawTetrominoes)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "ERROR: %v\n", err)
 	}
+
+	FindSmallestSquare(tetrominoes).Print()
 }

@@ -4,16 +4,16 @@ import (
 	"bufio"
 	"errors"
 
-	"tetris-optimiser/tetromino"
+	"tetris-optimiser/tetris"
 )
 
-func ParseTetrominoStream(scanner *bufio.Scanner) (output []tetromino.Raw, err error) {
+func ParseTetrominoStream(scanner *bufio.Scanner) (output []tetris.RawPiece, err error) {
 	if scanner == nil {
 		return nil, errors.New("scanner should not be nil")
 	}
 
 	rowCount := 0
-	tet := tetromino.Raw{}
+	tet := tetris.RawPiece{}
 
 	for scanner.Scan() {
 		if rowCount > 3 {

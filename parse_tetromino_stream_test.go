@@ -6,12 +6,12 @@ import (
 	"strings"
 	"testing"
 
-	"tetris-optimiser/tetromino"
+	"tetris-optimiser/tetris"
 )
 
 func TestParseTetrominoStream(t *testing.T) {
-	makeRaw := func(char rune) tetromino.Raw {
-		var tet tetromino.Raw
+	makeRaw := func(char rune) tetris.RawPiece {
+		var tet tetris.RawPiece
 
 		for y := range 4 {
 			for x := range 4 {
@@ -32,32 +32,32 @@ func TestParseTetrominoStream(t *testing.T) {
 	tests := []struct {
 		name        string
 		input       string
-		expected    []tetromino.Raw
+		expected    []tetris.RawPiece
 		expectError bool
 		expectedMsg string
 	}{
 		{
-			name:        "Valid: Single tetromino with trailing newline",
+			name:        "Valid: Single tetris with trailing newline",
 			input:       makeBlock('1'),
-			expected:    []tetromino.Raw{makeRaw('1')},
+			expected:    []tetris.RawPiece{makeRaw('1')},
 			expectError: false,
 		},
 		{
 			name:        "Valid: EOF after 4 lines",
 			input:       strings.TrimSuffix(makeBlock('2'), "\n"),
-			expected:    []tetromino.Raw{makeRaw('2')},
+			expected:    []tetris.RawPiece{makeRaw('2')},
 			expectError: false,
 		},
 		{
 			name:        "Valid: Multiple tetrominoes",
 			input:       makeBlock('A') + makeBlock('B'),
-			expected:    []tetromino.Raw{makeRaw('A'), makeRaw('B')},
+			expected:    []tetris.RawPiece{makeRaw('A'), makeRaw('B')},
 			expectError: false,
 		},
 		{
 			name:        "Valid: Multiple empty line separators",
 			input:       makeBlock('A') + "\n\n\n\n" + makeBlock('B'),
-			expected:    []tetromino.Raw{makeRaw('A'), makeRaw('B')},
+			expected:    []tetris.RawPiece{makeRaw('A'), makeRaw('B')},
 			expectError: false,
 		},
 		{

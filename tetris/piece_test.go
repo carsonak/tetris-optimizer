@@ -1,4 +1,4 @@
-package tetromino
+package tetris
 
 import (
 	"reflect"
@@ -10,8 +10,8 @@ import (
 // periods are replaced with spaces
 // extra rows are ignored, missing rows are filled with spaces
 // Usage: makeRaw("....", "####", "....", "....")
-func makeRaw(rows ...string) Raw {
-	var grid Raw
+func makeRaw(rows ...string) RawPiece {
+	var grid RawPiece
 
 	for y, rowStr := range rows {
 		if y > 3 {
@@ -45,7 +45,7 @@ func makePiece(id rune, w, h int, coords ...Point) Piece {
 func TestInit(t *testing.T) {
 	testData := []struct {
 		name      string
-		raw       Raw
+		raw       RawPiece
 		tetID     rune
 		want      Piece
 		expectErr bool

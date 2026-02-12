@@ -1,4 +1,4 @@
-package tetromino
+package tetris
 
 import (
 	"errors"
@@ -6,7 +6,7 @@ import (
 )
 
 // Unverified tetromino on a 4x4 grid
-type Raw [4][4]rune
+type RawPiece [4][4]rune
 
 type Point struct {
 	X, Y int
@@ -22,7 +22,7 @@ type Piece struct {
 
 //////////////////// STATIC FUNCTIONS ////////////////////
 
-func countNeighbors(pos Point, tet Raw) int {
+func countNeighbors(pos Point, tet RawPiece) int {
 	neighbors := 0
 
 	if pos.X > 0 && tet[pos.Y][pos.X-1] == '#' { // check left
@@ -89,7 +89,7 @@ func (t *Piece) normalize() {
 
 //////////////////// PUBLIC FUNCTIONS ////////////////////
 
-func Init(rawTet Raw, id rune) (Piece, error) {
+func Init(rawTet RawPiece, id rune) (Piece, error) {
 	var tet Piece
 	tetroBlocks := 0
 
