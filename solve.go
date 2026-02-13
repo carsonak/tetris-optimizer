@@ -31,8 +31,8 @@ func solve(board *tetris.Board, tetrominoes []tetris.Piece) bool {
 
 	for y := 0; y < board.Size-tet.Height; y++ {
 		for x := 0; x < board.Size-tet.Width; x++ {
-			if board.Place(tet, x, y) {
-				solve(board, tetrominoes[1:])
+			if board.Place(tet, x, y) && solve(board, tetrominoes[1:]) {
+				return true
 			}
 		}
 	}

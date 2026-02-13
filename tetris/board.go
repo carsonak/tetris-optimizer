@@ -16,7 +16,7 @@ func NewBoard(size uint) Board {
 		board: make([][]rune, size),
 	}
 
-	for i := range board.board {
+	for i := range board.Size {
 		board.board[i] = slices.Repeat([]rune{' '}, board.Size)
 	}
 
@@ -28,12 +28,12 @@ func (b Board) canPlace(tet Piece, x int, y int) bool {
 		return false
 	}
 
-	if x+tet.Width >= b.Size || y+tet.Height >= b.Size {
+	if x+tet.Width > b.Size || y+tet.Height > b.Size {
 		return false
 	}
 
 	for _, p := range tet.Pos {
-		if b.board[x+p.X][y+p.Y] != ' ' {
+		if b.board[y+p.Y][x+p.X] != ' ' {
 			return false
 		}
 	}
@@ -47,7 +47,7 @@ func (b *Board) Place(tet Piece, x int, y int) bool {
 	}
 
 	for _, p := range tet.Pos {
-		b.board[x+p.X][y+p.Y] = tet.ID
+		b.board[y+p.Y][x+p.X] = tet.ID
 	}
 
 	return true
@@ -56,7 +56,11 @@ func (b *Board) Place(tet Piece, x int, y int) bool {
 func (b Board) Print() {
 	for _, row := range b.board {
 		for _, r := range row {
-			fmt.Print(r)
+			if r == ' ' {
+				fmt.Print(".")
+			} else {
+				fmt.Printf("%c", r)
+			}
 		}
 
 		fmt.Println()

@@ -44,7 +44,7 @@ func countNeighbors(pos Point, tet RawPiece) int {
 	return neighbors
 }
 
-//////////////////// PRIVATE FUNCTIONS ////////////////////
+//////////////////// PRIVATE METHODS ////////////////////
 
 // Helper to adjust tetromino position to the bottom left.
 // This would be called after you parse the raw '#' positions
@@ -80,14 +80,9 @@ func (t *Piece) normalize() {
 
 	t.Width = maxX + 1
 	t.Height = maxY + 1
-
-	// Shift Piece to 4th Quadrant of cartesian plane
-	for i := range t.Pos {
-		t.Pos[i].Y -= t.Height
-	}
 }
 
-//////////////////// PUBLIC FUNCTIONS ////////////////////
+//////////////////// PUBLIC METHODS ////////////////////
 
 func Init(rawTet RawPiece, id rune) (Piece, error) {
 	var tet Piece
@@ -105,13 +100,15 @@ func Init(rawTet RawPiece, id rune) (Piece, error) {
 					return Piece{}, errors.New("Piece should have 4 blocks.")
 				}
 
-				pos := Point{x, y}
+				pos := Point{X: x, Y: y}
 				neighbors := countNeighbors(pos, rawTet)
 
 				if neighbors < 1 || neighbors > 3 {
 					return Piece{}, errors.New("invalid Piece")
 				}
 
+				// Adjust y coordinates such that the bottom pieces actually begin at 0
+				// pos.Y = 3 - pos.Y
 				tet.Pos[tetroBlocks] = pos
 				tetroBlocks++
 			default:
