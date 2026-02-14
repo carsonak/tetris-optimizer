@@ -23,27 +23,24 @@ func ParseTetrominoStream(scanner *bufio.Scanner) ([]tetris.RawPiece, error) {
 	for scanner.Scan() {
 		line := scanner.Text()
 
+		// Allow back-to-back tetrominoes without a blank separator.
+		if rowCount == 4 {
+			pieces = append(pieces, current)
+			current = tetris.RawPiece{}
+			rowCount = 0
+		}
+
 		// Blank line signals end of current tetromino
 		if len(line) == 0 {
 			if rowCount == 0 {
 				continue // Skip leading/trailing blank lines
 			}
-			if rowCount != 4 {
-				return nil, errors.New("invalid file format; Tetromino should have 4 rows")
-			}
-			pieces = append(pieces, current)
-			current = tetris.RawPiece{}
-			rowCount = 0
-			continue
+			return nil, errors.New("invalid file format; Tetromino should have 4 rows")
 		}
 
 		// Validate row dimensions
 		if len(line) != 4 {
 			return nil, errors.New("invalid file format; Tetromino should have 4 columns")
-		}
-
-		if rowCount >= 4 {
-			return nil, errors.New("invalid file format; Tetromino should have 4 rows")
 		}
 
 		copy(current[rowCount][:], []rune(line))

@@ -62,14 +62,13 @@ func FindSmallestSquare(tetrominoes []tetris.Piece) tetris.Board {
 	tetCount := len(tetrominoes)
 	minSize := minimumBoardSize(tetCount)
 	maxSize := maximumBoardSize(tetCount)
-	board := tetris.NewBoard(uint(minSize))
 
-	for size := minSize + 1; size < maxSize; size++ {
+	for size := minSize; size <= maxSize; size++ {
+		board := tetris.NewBoard(uint(size))
+
 		if solve(board, tetrominoes) {
 			return board
 		}
-
-		board = tetris.NewBoard(uint(size))
 	}
 
 	return tetris.Board{}
