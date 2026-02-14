@@ -22,6 +22,7 @@ type Piece struct {
 
 //////////////////// STATIC FUNCTIONS ////////////////////
 
+// Count blocks around another block in a tetromino.
 func countNeighbors(pos Point, tet RawPiece) int {
 	neighbors := 0
 
@@ -46,8 +47,7 @@ func countNeighbors(pos Point, tet RawPiece) int {
 
 //////////////////// PRIVATE METHODS ////////////////////
 
-// Helper to adjust tetromino position to the bottom left.
-// This would be called after you parse the raw '#' positions
+// Adjust tetromino position to the top-left of the grid.
 func (t *Piece) normalize() {
 	minX, minY := t.Pos[0].X, t.Pos[0].Y
 
@@ -84,12 +84,14 @@ func (t *Piece) normalize() {
 
 //////////////////// PUBLIC METHODS ////////////////////
 
+
+// Strip unnecessary information from a raw tetromino.
 func Init(rawTet RawPiece, id rune) (Piece, error) {
 	var tet Piece
 	tetroBlocks := 0
 
-	// Assume the 4x4 grid is the 1st Quadrant of a cartesian plane,
-	// bottom-left corner of the grid is the origin.
+	// Assume the 4x4 grid is the $th Quadrant of a cartesian plane,
+	// top-left corner of the grid is the origin.
 	for y, row := range rawTet {
 		for x, char := range row {
 			switch char {
@@ -100,6 +102,8 @@ func Init(rawTet RawPiece, id rune) (Piece, error) {
 					return Piece{}, errors.New("Piece should have 4 blocks.")
 				}
 
+				// Although we are using the 4th quadrant, we leave Y positive to make
+				// calculations easier simpler.
 				pos := Point{X: x, Y: y}
 				neighbors := countNeighbors(pos, rawTet)
 
@@ -107,8 +111,6 @@ func Init(rawTet RawPiece, id rune) (Piece, error) {
 					return Piece{}, errors.New("invalid Piece")
 				}
 
-				// Adjust y coordinates such that the bottom pieces actually begin at 0
-				// pos.Y = 3 - pos.Y
 				tet.Pos[tetroBlocks] = pos
 				tetroBlocks++
 			default:

@@ -22,17 +22,21 @@ func maximumBoardSize(tetrominoCount int) int {
 	return int(ceil)
 }
 
-func solve(board *tetris.Board, tetrominoes []tetris.Piece) bool {
+func solve(board tetris.Board, tetrominoes []tetris.Piece) bool {
 	if len(tetrominoes) < 1 {
 		return true
 	}
 
 	tet := tetrominoes[0]
 
-	for y := 0; y < board.Size-tet.Height; y++ {
-		for x := 0; x < board.Size-tet.Width; x++ {
-			if board.Place(tet, x, y) && solve(board, tetrominoes[1:]) {
-				return true
+	for y := range board.Size - (tet.Height - 1) {
+		for x := range board.Size - (tet.Width - 1) {
+			if board.Place(tet, x, y) {
+				if solve(board, tetrominoes[1:]) {
+					return true
+				} else {
+					board.Remove(tet, x, y)
+				}
 			}
 		}
 	}
@@ -47,7 +51,7 @@ func FindSmallestSquare(tetrominoes []tetris.Piece) tetris.Board {
 	board := tetris.NewBoard(uint(minSize))
 
 	for size := minSize + 1; size < maxSize; size++ {
-		if solve(&board, tetrominoes) {
+		if solve(board, tetrominoes) {
 			return board
 		}
 

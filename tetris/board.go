@@ -10,6 +10,7 @@ type Board struct {
 	Size  int
 }
 
+// Return a new square board of the given size.
 func NewBoard(size uint) Board {
 	board := Board{
 		Size:  int(size),
@@ -23,6 +24,7 @@ func NewBoard(size uint) Board {
 	return board
 }
 
+// Check if it is possible to place a tetromino at the given position on the board.
 func (b Board) canPlace(tet Piece, x int, y int) bool {
 	if x >= b.Size || y >= b.Size {
 		return false
@@ -41,7 +43,8 @@ func (b Board) canPlace(tet Piece, x int, y int) bool {
 	return true
 }
 
-func (b *Board) Place(tet Piece, x int, y int) bool {
+// Place a tetromino piece on the board at the given position if possible.
+func (b Board) Place(tet Piece, x int, y int) bool {
 	if !b.canPlace(tet, x, y) {
 		return false
 	}
@@ -53,14 +56,19 @@ func (b *Board) Place(tet Piece, x int, y int) bool {
 	return true
 }
 
+// Remove a tetromino piece from the board at the given position if possible.
+func (b Board) Remove(tet Piece, x int, y int) {
+	for _, p := range tet.Pos {
+		if b.board[y+p.Y][x+p.X] == tet.ID {
+			b.board[y+p.Y][x+p.X] = ' '
+		}
+	}
+}
+
 func (b Board) Print() {
 	for _, row := range b.board {
 		for _, r := range row {
-			if r == ' ' {
-				fmt.Print(".")
-			} else {
-				fmt.Printf("%c", r)
-			}
+			fmt.Printf("%c", r)
 		}
 
 		fmt.Println()
