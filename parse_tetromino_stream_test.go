@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"tetris-optimiser/tetris"
+	"tetris-optimizer/tetris"
 )
 
 func TestParseTetrominoStream(t *testing.T) {

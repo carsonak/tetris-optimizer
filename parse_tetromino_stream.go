@@ -1,56 +1,65 @@
+// Package main contains the file parsing functionality for extracting tetrominoes.
 package main
 
 import (
 	"bufio"
 	"errors"
 
-	"tetris-optimiser/tetris"
+	"tetris-optimizer/tetris"
 )
 
-func ParseTetrominoStream(scanner *bufio.Scanner) (output []tetris.RawPiece, err error) {
+// ParseTetrominoStream reads and validates tetrominoes from a file scanner.
+// Each tetromino must be 4x4, with '#' for blocks and '.' or ' ' for empty space.
+// Tetrominoes are separated by blank lines.
+func ParseTetrominoStream(scanner *bufio.Scanner) ([]tetris.RawPiece, error) {
 	if scanner == nil {
 		return nil, errors.New("scanner should not be nil")
 	}
 
+	var pieces []tetris.RawPiece
+	var current tetris.RawPiece
 	rowCount := 0
-	tet := tetris.RawPiece{}
 
 	for scanner.Scan() {
-		if rowCount > 3 {
-			output = append(output, tet)
-			rowCount = 0
-		}
-
 		line := scanner.Text()
 
-		if len(line) < 1 {
+		// Blank line signals end of current tetromino
+		if len(line) == 0 {
 			if rowCount == 0 {
-				continue
+				continue // Skip leading/trailing blank lines
 			}
-
-			return nil, errors.New("invalid file format; Tetromino should have 4 rows")
+			if rowCount != 4 {
+				return nil, errors.New("invalid file format; Tetromino should have 4 rows")
+			}
+			pieces = append(pieces, current)
+			current = tetris.RawPiece{}
+			rowCount = 0
+			continue
 		}
 
+		// Validate row dimensions
 		if len(line) != 4 {
 			return nil, errors.New("invalid file format; Tetromino should have 4 columns")
 		}
 
-		copy(tet[rowCount][:], []rune(line))
+		if rowCount >= 4 {
+			return nil, errors.New("invalid file format; Tetromino should have 4 rows")
+		}
+
+		copy(current[rowCount][:], []rune(line))
 		rowCount++
 	}
 
-	if scanner.Err() != nil {
-		return nil, scanner.Err()
+	if err := scanner.Err(); err != nil {
+		return nil, err
 	}
 
+	// Add final tetromino if present
 	if rowCount == 4 {
-		output = append(output, tet)
-		rowCount = 0
-	}
-
-	if rowCount != 0 {
+		pieces = append(pieces, current)
+	} else if rowCount > 0 {
 		return nil, errors.New("invalid file format; Tetromino should have 4 rows")
 	}
 
-	return
+	return pieces, nil
 }

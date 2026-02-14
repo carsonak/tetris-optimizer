@@ -1,11 +1,14 @@
+// Package main contains the backtracking algorithm that solves the tetromino packing problem.
 package main
 
 import (
 	"math"
 
-	"tetris-optimiser/tetris"
+	"tetris-optimizer/tetris"
 )
 
+// minimumBoardSize returns the theoretical minimum board size (⌈√(count×4)⌉),
+// assuming perfect packing with no wasted space.
 func minimumBoardSize(tetrominoCount int) int {
 	cellCount := float64(tetrominoCount * 4)
 	root := math.Sqrt(cellCount)
@@ -14,6 +17,8 @@ func minimumBoardSize(tetrominoCount int) int {
 	return int(ceil)
 }
 
+// maximumBoardSize returns the upper search bound (⌈√(count×16)⌉),
+// accounting for worst-case spacing between pieces.
 func maximumBoardSize(tetrominoCount int) int {
 	cellCount := float64(tetrominoCount * 16)
 	root := math.Sqrt(cellCount)
@@ -22,28 +27,37 @@ func maximumBoardSize(tetrominoCount int) int {
 	return int(ceil)
 }
 
-func solve(board tetris.Board, tetrominoes []tetris.Piece) bool {
-	if len(tetrominoes) < 1 {
+// solve recursively places tetrominoes using backtracking.
+// Returns true if all pieces fit on the board, false otherwise.
+// The board is modified in place and restored via Remove on backtrack.
+func solve(board tetris.Board, pieces []tetris.Piece) bool {
+	if len(pieces) == 0 {
 		return true
 	}
 
-	tet := tetrominoes[0]
+	current := pieces[0]
+	remaining := pieces[1:]
 
-	for y := range board.Size - (tet.Height - 1) {
-		for x := range board.Size - (tet.Width - 1) {
-			if board.Place(tet, x, y) {
-				if solve(board, tetrominoes[1:]) {
-					return true
-				} else {
-					board.Remove(tet, x, y)
-				}
+	// Try all valid positions for the current piece
+	for y := 0; y <= board.Size-current.Height; y++ {
+		for x := 0; x <= board.Size-current.Width; x++ {
+			if !board.Place(current, x, y) {
+				continue
 			}
+
+			if solve(board, remaining) {
+				return true
+			}
+
+			board.Remove(current, x, y)
 		}
 	}
 
 	return false
 }
 
+// FindSmallestSquare finds the smallest square that fits all tetrominoes.
+// Tests board sizes from minimum to maximum, returning the first valid solution.
 func FindSmallestSquare(tetrominoes []tetris.Piece) tetris.Board {
 	tetCount := len(tetrominoes)
 	minSize := minimumBoardSize(tetCount)
