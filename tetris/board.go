@@ -18,8 +18,8 @@ func NewBoard(size uint) Board {
 		board: make([][]byte, size),
 	}
 
-	// Allocate all the memory for the slice in one go,
-	// this improves cache locality
+	// OPTIMISATION: Allocating all the board memory in one continuous block
+	// improves cache locality
 	backingMem := slices.Repeat([]byte{'.'}, b.Size*b.Size)
 
 	for i := range b.Size {
@@ -55,9 +55,7 @@ func (b *Board) Place(tet Piece, x int, y int) {
 // Remove clears a piece from the board (used for backtracking).
 func (b *Board) Remove(tet Piece, x, y int) {
 	for _, p := range tet.Pos {
-		if b.board[y+p.Y][x+p.X] == tet.ID {
-			b.board[y+p.Y][x+p.X] = '.'
-		}
+		b.board[y+p.Y][x+p.X] = '.'
 	}
 }
 

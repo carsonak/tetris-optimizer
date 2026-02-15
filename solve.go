@@ -3,6 +3,7 @@ package main
 
 import (
 	"math"
+	"slices"
 
 	"tetris-optimizer/tetris"
 )
@@ -58,6 +59,16 @@ func FindSmallestSquare(tetrominoes []tetris.Piece) tetris.Board {
 	tetCount := len(tetrominoes)
 	minSize := minimumBoardSize(tetCount)
 	maxSize := maximumBoardSize(tetCount)
+
+	// OPTIMIZATION: Sort pieces to place the largest/hardest ones first.
+	// This drastically reduces the branching factor of the recursion in some cases.
+	// WARNING: This will also cripple performance of certain cases.
+	slices.SortFunc(tetrominoes, func(a, b tetris.Piece) int {
+		maxA := max(a.Width, a.Height)
+		maxB := max(b.Width, b.Height)
+		// The subtraction is reversed to cause items to be sorted in descending order.
+		return maxB - maxA
+	})
 
 	for size := minSize; size <= maxSize; size++ {
 		board := tetris.NewBoard(uint(size))
