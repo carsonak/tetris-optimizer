@@ -3,38 +3,40 @@ package main
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
 	"os"
 
 	"tetris-optimizer/tetris"
 )
 
-// initTetrominoPieces converts raw tetrominoes to validated pieces with unique IDs (A-Z).
+// Convert raw tetrominoes to validated pieces with unique IDs (A-Z).
 // Returns an error if any raw piece is invalid or if there are more than 26 pieces.
 func initTetrominoPieces(rawTetrominoes []tetris.RawPiece) ([]tetris.Piece, error) {
+	idLimit := int('Z'-'A') + 1
+
+	if len(rawTetrominoes) > idLimit {
+		return nil, fmt.Errorf("cannot process more than %d tetrominoes", idLimit)
+	}
+
 	var pieces []tetris.Piece
+	id := 'A'
 
-	for i, raw := range rawTetrominoes {
-		id := rune('A' + i)
-
-		if id > 'Z' {
-			return nil, errors.New("ERROR: cannot process more than 26 tetrominoes")
-		}
-
-		piece, err := tetris.Init(raw, id)
+	for _, raw := range rawTetrominoes {
+		p, err := tetris.Init(raw, id)
 		if err != nil {
 			return nil, err
 		}
 
-		pieces = append(pieces, piece)
+		pieces = append(pieces, p)
+		id++
 	}
 
 	return pieces, nil
 }
 
-// main expects exactly one argument: path to a tetromino file.
-// Parses the file, validates tetrominoes, finds the smallest square, and prints the solution.
+// Parses a tetromino file, validates tetrominoes,
+// find the smallest square to fit all the tetrominoes
+// and print the solution.
 func main() {
 	if len(os.Args) != 2 {
 		fmt.Fprintf(os.Stderr, "ERROR: USAGE: %s tetromino_file", os.Args[0])
@@ -57,7 +59,8 @@ func main() {
 	tetrominoes, err := initTetrominoPieces(rawTetrominoes)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "ERROR: %v\n", err)
+		os.Exit(1)
 	}
 
-	FindSmallestSquare(tetrominoes).Print()
+	fmt.Print(FindSmallestSquare(tetrominoes).ToString())
 }

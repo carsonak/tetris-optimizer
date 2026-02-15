@@ -9,27 +9,27 @@ import (
 	"tetris-optimizer/tetris"
 )
 
-func TestParseTetrominoStream(t *testing.T) {
-	makeRaw := func(char rune) tetris.RawPiece {
-		var tet tetris.RawPiece
+func makeRaw(char rune) tetris.RawPiece {
+	var tet tetris.RawPiece
 
-		for y := range 4 {
-			for x := range 4 {
-				tet[y][x] = char
-			}
+	for y := range 4 {
+		for x := range 4 {
+			tet[y][x] = char
 		}
-
-		return tet
 	}
 
-	makeBlock := func(r rune) string {
-		s := string([]rune{r})
-		line := strings.Repeat(s, 4) + "\n"
+	return tet
+}
 
-		return strings.Repeat(line, 4)
-	}
+func makeBlock(r rune) string {
+	s := string([]rune{r})
+	line := strings.Repeat(s, 4) + "\n"
 
-	tests := []struct {
+	return strings.Repeat(line, 4)
+}
+
+func TestParseTetrominoStream(t *testing.T) {
+	testData := []struct {
 		name        string
 		input       string
 		expected    []tetris.RawPiece
@@ -46,12 +46,6 @@ func TestParseTetrominoStream(t *testing.T) {
 			name:        "Valid: EOF after 4 lines",
 			input:       strings.TrimSuffix(makeBlock('2'), "\n"),
 			expected:    []tetris.RawPiece{makeRaw('2')},
-			expectError: false,
-		},
-		{
-			name:        "Valid: Multiple tetrominoes",
-			input:       makeBlock('A') + makeBlock('B'),
-			expected:    []tetris.RawPiece{makeRaw('A'), makeRaw('B')},
 			expectError: false,
 		},
 		{
@@ -86,9 +80,15 @@ func TestParseTetrominoStream(t *testing.T) {
 		},
 		{
 			name:        "Invalid: Rows > 4",
-			input:       makeBlock('1') + "1234\n\n",
+			input:       makeBlock('1') + "1234\n",
 			expectError: true,
-			expectedMsg: "invalid file format; Tetromino should have 4 rows",
+			expectedMsg: "invalid file format; Tetrominoes should be separated by blank lines",
+		},
+		{
+			name: "Invalid: no separator between tetrominoes",
+			input: makeBlock('1') + makeBlock('2'),
+			expectError: true,
+			expectedMsg: "invalid file format; Tetrominoes should be separated by blank lines",
 		},
 	}
 
@@ -99,16 +99,16 @@ func TestParseTetrominoStream(t *testing.T) {
 		}
 	})
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			scanner := bufio.NewScanner(strings.NewReader(tt.input))
+	for _, test := range testData {
+		t.Run(test.name, func(t *testing.T) {
+			scanner := bufio.NewScanner(strings.NewReader(test.input))
 			output, err := ParseTetrominoStream(scanner)
 
-			if tt.expectError {
+			if test.expectError {
 				if err == nil {
-					t.Errorf("expected error %q, but got nil", tt.expectedMsg)
-				} else if err.Error() != tt.expectedMsg && tt.expectedMsg != "" {
-					t.Errorf("expected error %q, got %q", tt.expectedMsg, err.Error())
+					t.Errorf("expected error %q, but got nil", test.expectedMsg)
+				} else if err.Error() != test.expectedMsg && test.expectedMsg != "" {
+					t.Errorf("expected error %q, got %q", test.expectedMsg, err.Error())
 				}
 
 				return
@@ -118,8 +118,8 @@ func TestParseTetrominoStream(t *testing.T) {
 				t.Errorf("unexpected error: %v", err)
 			}
 
-			if !reflect.DeepEqual(output, tt.expected) {
-				t.Errorf("expected output:\n%+q\ngot:\n%+q", tt.expected, output)
+			if !reflect.DeepEqual(output, test.expected) {
+				t.Errorf("expected output:\n%+q\ngot:\n%+q", test.expected, output)
 			}
 		})
 	}

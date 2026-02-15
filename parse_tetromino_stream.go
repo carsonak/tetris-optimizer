@@ -8,15 +8,14 @@ import (
 	"tetris-optimizer/tetris"
 )
 
-// ParseTetrominoStream reads and validates tetrominoes from a file scanner.
-// Each tetromino must be 4x4, with '#' for blocks and '.' or ' ' for empty space.
+// Read and validates tetrominoes from a scanner.
+// Each tetromino must be 4x4.
 // Tetrominoes are separated by blank lines.
-func ParseTetrominoStream(scanner *bufio.Scanner) ([]tetris.RawPiece, error) {
+func ParseTetrominoStream(scanner *bufio.Scanner) (pieces []tetris.RawPiece, err error) {
 	if scanner == nil {
 		return nil, errors.New("scanner should not be nil")
 	}
 
-	var pieces []tetris.RawPiece
 	var current tetris.RawPiece
 	rowCount := 0
 
@@ -28,17 +27,22 @@ func ParseTetrominoStream(scanner *bufio.Scanner) ([]tetris.RawPiece, error) {
 			pieces = append(pieces, current)
 			current = tetris.RawPiece{}
 			rowCount = 0
+
+			if len(line) != 0 {
+				return nil, errors.New("invalid file format; Tetrominoes should be separated by blank lines")
+			}
+
+			continue
 		}
 
-		// Blank line signals end of current tetromino
 		if len(line) == 0 {
 			if rowCount == 0 {
-				continue // Skip leading/trailing blank lines
+				continue // Allow for several blank lines between tetrominoes.
 			}
+
 			return nil, errors.New("invalid file format; Tetromino should have 4 rows")
 		}
 
-		// Validate row dimensions
 		if len(line) != 4 {
 			return nil, errors.New("invalid file format; Tetromino should have 4 columns")
 		}

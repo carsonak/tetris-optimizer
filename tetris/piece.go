@@ -7,15 +7,15 @@ import (
 	"fmt"
 )
 
-// RawPiece is an unverified 4x4 tetromino with '#' for blocks, other chars for empty space.
+// An unverified 4x4 tetromino with '#' for blocks, other chars for empty space.
 type RawPiece [4][4]rune
 
-// Point represents a 2D coordinate.
+// Represents a 2D coordinate.
 type Point struct {
 	X, Y int
 }
 
-// Piece is a validated and normalized tetromino with relative block coordinates,
+// A validated and normalized tetromino with relative block coordinates,
 // Width/Height bounds, and an ID for printing (A-Z).
 type Piece struct {
 	Pos    [4]Point // Relative coordinates of the 4 blocks
@@ -26,7 +26,7 @@ type Piece struct {
 
 //////////////////// STATIC FUNCTIONS ////////////////////
 
-// countNeighbors returns the number of orthogonally adjacent blocks (0-4).
+// Return the number of orthogonally adjacent (not diagonal) blocks.
 // Used to validate that tetromino blocks are properly connected.
 func countNeighbors(pos Point, tet RawPiece) int {
 	neighbors := 0
@@ -52,7 +52,8 @@ func countNeighbors(pos Point, tet RawPiece) int {
 
 //////////////////// PRIVATE METHODS ////////////////////
 
-// normalize shifts the piece so its top-left block is at (0, 0) and sets Width/Height.
+// Shift the tetromino piece so its top-left block is at (0, 0) and
+// sets its Width and Height.
 func (t *Piece) normalize() {
 	// Find minimum X and Y coordinates
 	minX, minY := t.Pos[0].X, t.Pos[0].Y
@@ -86,16 +87,17 @@ func (t *Piece) normalize() {
 
 //////////////////// PUBLIC METHODS ////////////////////
 
-// Init validates a RawPiece and returns a normalized Piece with the given ID.
+// Validate a RawPiece and return a normalized Piece with the given ID.
 // Each block must be connected to 1-3 neighbors (orthogonally).
-// Returns an error if the piece is invalid (wrong count, disconnected blocks, etc).
+// Returns an error if the piece is invalid.
 func Init(rawTet RawPiece, id rune) (Piece, error) {
 	var tet Piece
+	neighbours := 0
 	blockCount := 0
 
 	for y, row := range rawTet {
 		for x, char := range row {
-			if char == ' ' {
+			if char == ' ' || char == '.' {
 				continue
 			}
 
@@ -104,21 +106,22 @@ func Init(rawTet RawPiece, id rune) (Piece, error) {
 			}
 
 			if blockCount >= 4 {
-				return Piece{}, errors.New("Piece should have 4 blocks.")
+				return Piece{}, errors.New("tetromino should have 4 blocks.")
 			}
 
 			pos := Point{X: x, Y: y}
-			if neighbors := countNeighbors(pos, rawTet); neighbors < 1 || neighbors > 3 {
-				return Piece{}, errors.New("invalid Piece")
-			}
-
+			neighbours += countNeighbors(pos, rawTet)
 			tet.Pos[blockCount] = pos
 			blockCount++
 		}
 	}
 
 	if blockCount != 4 {
-		return Piece{}, errors.New("Piece should have 4 blocks")
+		return Piece{}, errors.New("tetromino should have 4 blocks")
+	}
+
+	if neighbours != 6 && neighbours != 8 {
+		return Piece{}, errors.New("invalid tetromino")
 	}
 
 	tet.ID = id

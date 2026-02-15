@@ -2,28 +2,20 @@ package tetris
 
 import (
 	"reflect"
-	"strings"
 	"testing"
 )
 
 // Helper to create a Raw 4x4 grid from strings
-// periods are replaced with spaces
-// extra rows are ignored, missing rows are filled with spaces
-// Usage: makeRaw("....", "####", "....", "....")
-func makeRaw(rows ...string) RawPiece {
+func makeRaw(t *testing.T, rows ...string) RawPiece {
+	t.Helper()
+	if len(rows) != 4 {
+		panic("invalid: number of rows for RawPiece")
+	}
+
 	var grid RawPiece
 
 	for y, rowStr := range rows {
-		if y > 3 {
-			break
-		}
-
-		rowStr = strings.ReplaceAll(rowStr, ".", " ")
 		copy(grid[y][:], []rune(rowStr))
-	}
-
-	for y := len(rows); y < 4; y++ {
-		copy(grid[y][:], []rune("    "))
 	}
 
 	return grid
@@ -53,7 +45,7 @@ func TestInit(t *testing.T) {
 	}{
 		{
 			name: "Valid I-Shape (Horizontal)",
-			raw: makeRaw(
+			raw: makeRaw(t,
 				"####",
 				"....",
 				"....",
@@ -67,7 +59,7 @@ func TestInit(t *testing.T) {
 		},
 		{
 			name: "Valid O-Shape",
-			raw: makeRaw(
+			raw: makeRaw(t,
 				"##..",
 				"##..",
 				"....",
@@ -81,7 +73,7 @@ func TestInit(t *testing.T) {
 		},
 		{
 			name: "Valid L-Shape (Shifted in grid)",
-			raw: makeRaw(
+			raw: makeRaw(t,
 				".#..",
 				".#..",
 				".##.",
@@ -95,7 +87,7 @@ func TestInit(t *testing.T) {
 		},
 		{
 			name: "Valid T-Shape (Shifted in grid)",
-			raw: makeRaw(
+			raw: makeRaw(t,
 				"....",
 				".###",
 				"..#.",
@@ -108,8 +100,8 @@ func TestInit(t *testing.T) {
 			expectErr: false,
 		},
 		{
-			name: "Invalid Character",
-			raw: makeRaw(
+			name: "Invalid: character",
+			raw: makeRaw(t,
 				"##..",
 				"##..",
 				"x...", // 'x' is invalid
@@ -119,37 +111,48 @@ func TestInit(t *testing.T) {
 			errMsg:    "unrecognised character 'x'",
 		},
 		{
-			name: "Invalid Count (Too few)",
-			raw: makeRaw(
+			name: "Invalid: Count (Too few)",
+			raw: makeRaw(t,
 				"###.",
 				"....",
 				"....",
 				"....",
 			),
 			expectErr: true,
-			errMsg:    "Piece should have 4 blocks",
+			errMsg:    "tetromino should have 4 blocks",
 		},
 		{
-			name: "Invalid Count (Too many)",
-			raw: makeRaw(
+			name: "Invalid: Count (Too many)",
+			raw: makeRaw(t,
 				"####",
 				"#...",
 				"....",
 				"....",
 			),
 			expectErr: true,
-			errMsg:    "Piece should have 4 blocks.",
+			errMsg:    "tetromino should have 4 blocks.",
 		},
 		{
-			name: "Invalid Connectivity (Isolated Block)",
-			raw: makeRaw(
+			name: "Invalid: Connectivity (Isolated Block)",
+			raw: makeRaw(t,
 				"###.",
 				"....",
 				"#...",
 				"....",
 			),
 			expectErr: true,
-			errMsg:    "invalid Piece",
+			errMsg:    "invalid tetromino",
+		},
+		{
+			name: "Invalid: Connectivity (2 floating blocks)",
+			raw: makeRaw(t,
+				"##..",
+				"....",
+				"...#",
+				"...#",
+			),
+			expectErr: true,
+			errMsg:    "invalid tetromino",
 		},
 	}
 
