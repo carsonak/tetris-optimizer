@@ -85,8 +85,8 @@ func TestParseTetrominoStream(t *testing.T) {
 			expectedMsg: "invalid file format; Tetrominoes should be separated by blank lines",
 		},
 		{
-			name: "Invalid: no separator between tetrominoes",
-			input: makeBlock('1') + makeBlock('2'),
+			name:        "Invalid: no separator between tetrominoes",
+			input:       makeBlock('1') + makeBlock('2'),
 			expectError: true,
 			expectedMsg: "invalid file format; Tetrominoes should be separated by blank lines",
 		},

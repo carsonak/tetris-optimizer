@@ -2,6 +2,7 @@ package main
 
 import (
 	"testing"
+
 	"tetris-optimizer/tetris"
 )
 
@@ -20,7 +21,7 @@ func TestInitTetrominoPieces(t *testing.T) {
 	var rawI tetris.RawPiece
 
 	for i := range 4 {
-		copy(rawI[i][:], []rune("#   "))
+		copy(rawI[i][:], []rune("#..."))
 	}
 
 	t.Run("At limit", func(t *testing.T) {
@@ -54,5 +55,4 @@ func TestInitTetrominoPieces(t *testing.T) {
 			t.Errorf("expected error %q, got %q", expectedMsg, err.Error())
 		}
 	})
-
 }

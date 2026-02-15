@@ -83,7 +83,7 @@ func (t *Piece) normalize() {
 
 //////////////////// PUBLIC METHODS ////////////////////
 
-// Init validates and normalizes a RawPiece (4 blocks, neighbor count 6 or 8).
+// Init validates and normalizes a RawPiece (4 blocks, neighbour count 6 or 8).
 func Init(rawTet RawPiece, id rune) (Piece, error) {
 	var tet Piece
 	neighbours := 0
@@ -91,7 +91,7 @@ func Init(rawTet RawPiece, id rune) (Piece, error) {
 
 	for y, row := range rawTet {
 		for x, char := range row {
-			if char == ' ' || char == '.' {
+			if char == '.' {
 				continue
 			}
 

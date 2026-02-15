@@ -195,7 +195,7 @@ run_good_test() {
 
     local space_count
     # Count empty spaces
-    space_count=$(echo "$output" | grep -o ' ' | wc -l)
+    space_count=$(echo "$output" | grep -o '\.' | wc -l)
 
     if [[ -n "$expected_spaces" ]]
     then

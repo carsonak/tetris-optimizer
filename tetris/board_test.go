@@ -14,7 +14,7 @@ func TestNewBoard(t *testing.T) {
 	// Verify all cells are empty
 	for y := range board.Size {
 		for x := range board.Size {
-			if board.board[y][x] != ' ' {
+			if board.board[y][x] != '.' {
 				t.Errorf("expected empty cell at (%d,%d), got %c", x, y, board.board[y][x])
 			}
 		}
@@ -82,10 +82,10 @@ func TestCanPlace(t *testing.T) {
 
 func TestToString(t *testing.T) {
 	board := NewBoard(4)
-	expected := "    \n" +
-	" AA \n" +
-	" AA \n" +
-	"    \n"
+	expected := "....\n" +
+		".AA.\n" +
+		".AA.\n" +
+		"....\n"
 
 	board.Place(OPiece, 1, 1)
 	output := board.ToString()
