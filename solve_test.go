@@ -54,7 +54,7 @@ func TestMaximumBoardSize(t *testing.T) {
 func TestSolveEmptyList(t *testing.T) {
 	board := tetris.NewBoard(4)
 
-	if !solve(&board, []tetris.Piece{}) {
+	if !solve(&board, []tetris.Piece{}, nil) {
 		t.Fatal("expected solve to succeed with empty piece list")
 	}
 }
@@ -92,7 +92,7 @@ func TestSolve(t *testing.T) {
 
 	for _, test := range testData {
 		t.Run(test.name, func(t *testing.T) {
-			output := solve(&test.board, []tetris.Piece{test.piece})
+			output := solve(&test.board, []tetris.Piece{test.piece}, nil)
 			if output != test.expected {
 				t.Fatalf(
 					"expected solve(board(%d), {piece(W: %d, H: %d)}) == '%v', got '%v'",
