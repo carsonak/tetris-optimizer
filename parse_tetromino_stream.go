@@ -1,4 +1,4 @@
-// Package main contains the file parsing functionality for extracting tetrominoes.
+// Package main contains file parsing for tetromino input.
 package main
 
 import (
@@ -8,9 +8,7 @@ import (
 	"tetris-optimizer/tetris"
 )
 
-// Read and validates tetrominoes from a scanner.
-// Each tetromino must be 4x4.
-// Tetrominoes are separated by blank lines.
+// ParseTetrominoStream reads tetrominoes from a scanner (4 rows × 4 cols, separated by blanks).
 func ParseTetrominoStream(scanner *bufio.Scanner) (pieces []tetris.RawPiece, err error) {
 	if scanner == nil {
 		return nil, errors.New("scanner should not be nil")

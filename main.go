@@ -1,4 +1,4 @@
-// Package main handles command-line parsing, file I/O, and orchestrates the puzzle solving process.
+// Package main handles CLI, file I/O, and puzzle solving orchestration.
 package main
 
 import (
@@ -9,8 +9,7 @@ import (
 	"tetris-optimizer/tetris"
 )
 
-// Convert raw tetrominoes to validated pieces with unique IDs (A-Z).
-// Returns an error if any raw piece is invalid or if there are more than 26 pieces.
+// initTetrominoPieces converts raw tetrominoes to validated pieces with IDs A-Z.
 func initTetrominoPieces(rawTetrominoes []tetris.RawPiece) ([]tetris.Piece, error) {
 	idLimit := int('Z'-'A') + 1
 
@@ -34,9 +33,7 @@ func initTetrominoPieces(rawTetrominoes []tetris.RawPiece) ([]tetris.Piece, erro
 	return pieces, nil
 }
 
-// Parses a tetromino file, validates tetrominoes,
-// find the smallest square to fit all the tetrominoes
-// and print the solution.
+// main parses input file, validates tetrominoes, and prints the solution.
 func main() {
 	if len(os.Args) != 2 {
 		fmt.Fprintf(os.Stderr, "ERROR: USAGE: %s tetromino_file", os.Args[0])

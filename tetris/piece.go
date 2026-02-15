@@ -1,5 +1,4 @@
-// Package tetris contains the core data structures for representing tetrominoes
-// and the game board, including validation and manipulation logic.
+// Package tetris contains core data structures and validation logic for tetrominoes and the board.
 package tetris
 
 import (
@@ -7,16 +6,15 @@ import (
 	"fmt"
 )
 
-// An unverified 4x4 tetromino with '#' for blocks, other chars for empty space.
+// RawPiece is an unvalidated 4×4 tetromino grid.
 type RawPiece [4][4]rune
 
-// Represents a 2D coordinate.
+// Point represents a 2D coordinate (0-indexed, origin at top-left).
 type Point struct {
 	X, Y int
 }
 
-// A validated and normalized tetromino with relative block coordinates,
-// Width/Height bounds, and an ID for printing (A-Z).
+// Piece is a validated, normalized tetromino with blocks, dimensions, and ID.
 type Piece struct {
 	Pos    [4]Point // Relative coordinates of the 4 blocks
 	Width  int
@@ -26,8 +24,7 @@ type Piece struct {
 
 //////////////////// STATIC FUNCTIONS ////////////////////
 
-// Return the number of orthogonally adjacent (not diagonal) blocks.
-// Used to validate that tetromino blocks are properly connected.
+// countNeighbors returns the count of orthogonally adjacent blocks.
 func countNeighbors(pos Point, tet RawPiece) int {
 	neighbors := 0
 
@@ -52,8 +49,7 @@ func countNeighbors(pos Point, tet RawPiece) int {
 
 //////////////////// PRIVATE METHODS ////////////////////
 
-// Shift the tetromino piece so its top-left block is at (0, 0) and
-// sets its Width and Height.
+// normalize shifts the tetromino to start at (0,0) and calculates bounds.
 func (t *Piece) normalize() {
 	// Find minimum X and Y coordinates
 	minX, minY := t.Pos[0].X, t.Pos[0].Y
@@ -87,9 +83,7 @@ func (t *Piece) normalize() {
 
 //////////////////// PUBLIC METHODS ////////////////////
 
-// Validate a RawPiece and return a normalized Piece with the given ID.
-// Each block must be connected to 1-3 neighbors (orthogonally).
-// Returns an error if the piece is invalid.
+// Init validates and normalizes a RawPiece (4 blocks, neighbor count 6 or 8).
 func Init(rawTet RawPiece, id rune) (Piece, error) {
 	var tet Piece
 	neighbours := 0

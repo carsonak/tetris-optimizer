@@ -5,14 +5,13 @@ import (
 	"strings"
 )
 
-// Represents a square grid where tetrominoes are placed.
-// Empty cells are ' ', occupied cells are marked with piece IDs (A-Z).
+// Board is a square grid for placing tetrominoes.
 type Board struct {
 	board [][]rune
-	Size  int // Width and height of the square
+	Size  int // Width and height of the square board
 }
 
-// Create a new empty square board of the given size.
+// NewBoard creates a new empty square board.
 func NewBoard(size uint) Board {
 	board := Board{
 		Size:  int(size),
@@ -26,7 +25,7 @@ func NewBoard(size uint) Board {
 	return board
 }
 
-// Check if a piece fits at the given position without overlap or bounds issues.
+// canPlace checks if a piece fits at the given position.
 func (b Board) canPlace(tet Piece, x int, y int) bool {
 	if x >= b.Size || y >= b.Size {
 		return false
@@ -46,8 +45,7 @@ func (b Board) canPlace(tet Piece, x int, y int) bool {
 	return true
 }
 
-// Insert a piece on the board if possible.
-// Returns true on success, false on failure.
+// Place places a piece on the board (returns false if placement fails).
 func (b Board) Place(tet Piece, x int, y int) bool {
 	if !b.canPlace(tet, x, y) {
 		return false
@@ -60,7 +58,7 @@ func (b Board) Place(tet Piece, x int, y int) bool {
 	return true
 }
 
-// Clear a piece from the board at the given position.
+// Remove clears a piece from the board (used for backtracking).
 func (b Board) Remove(tet Piece, x int, y int) {
 	for _, p := range tet.Pos {
 		if b.board[y+p.Y][x+p.X] == tet.ID {
@@ -69,7 +67,7 @@ func (b Board) Remove(tet Piece, x int, y int) {
 	}
 }
 
-// Return a string representation of the board.
+// ToString returns a string representation of the board.
 func (b Board) ToString() string {
 	var str strings.Builder
 

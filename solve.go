@@ -1,4 +1,4 @@
-// Package main contains the backtracking algorithm that solves the tetromino packing problem.
+// Package main contains the backtracking solver for the tetromino packing problem.
 package main
 
 import (
@@ -7,8 +7,7 @@ import (
 	"tetris-optimizer/tetris"
 )
 
-// Return the theoretical minimum board size (⌈√(count×4)⌉),
-// assuming perfect packing with no wasted space.
+// minimumBoardSize returns the theoretical minimum size: ⌈√(count×4)⌉.
 func minimumBoardSize(tetrominoCount int) int {
 	cellCount := float64(tetrominoCount * 4)
 	root := math.Sqrt(cellCount)
@@ -17,8 +16,7 @@ func minimumBoardSize(tetrominoCount int) int {
 	return int(ceil)
 }
 
-// Return the upper search bound (⌈√(count×16)⌉),
-// accounting for worst-case spacing between pieces.
+// maximumBoardSize returns the upper search bound: ⌈√(count×16)⌉.
 func maximumBoardSize(tetrominoCount int) int {
 	cellCount := float64(tetrominoCount * 16)
 	root := math.Sqrt(cellCount)
@@ -27,9 +25,7 @@ func maximumBoardSize(tetrominoCount int) int {
 	return int(ceil)
 }
 
-// Recursively try and fit tetrominoes onto a board using backtracking.
-// Returns true if all pieces fit on the board, false otherwise.
-// The board is modified in place and restored on backtrack.
+// solve recursively places pieces using backtracking.
 func solve(board tetris.Board, pieces []tetris.Piece) bool {
 	if len(pieces) == 0 {
 		return true
@@ -56,8 +52,7 @@ func solve(board tetris.Board, pieces []tetris.Piece) bool {
 	return false
 }
 
-// Find the smallest square that fits all tetrominoes.
-// Tests board sizes from minimum to maximum, returning the first valid solution.
+// FindSmallestSquare finds the smallest square that fits all tetrominoes.
 func FindSmallestSquare(tetrominoes []tetris.Piece) tetris.Board {
 	tetCount := len(tetrominoes)
 	minSize := minimumBoardSize(tetCount)
