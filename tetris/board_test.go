@@ -22,26 +22,10 @@ func TestNewBoard(t *testing.T) {
 }
 
 var OPiece = Piece{
-	Pos:    [4]Point{{0, 0}, {1, 0}, {0, 1}, {1, 1}},
+	Pos:    [4]Point{{X: 0, Y: 0}, {X: 1, Y: 0}, {X: 0, Y: 1}, {X: 1, Y: 1}},
 	Width:  2,
 	Height: 2,
 	ID:     'A',
-}
-
-func TestPlace(t *testing.T) {
-	board := NewBoard(4)
-
-	if board.Place(OPiece, 3, 3) {
-		t.Fatal("expected out-of-bounds placement to fail")
-	}
-
-	if !board.Place(OPiece, 0, 0) {
-		t.Fatal("expected placement at (0,0) to succeed")
-	}
-
-	if board.Place(OPiece, 1, 1) {
-		t.Fatal("expected overlapping placement to fail")
-	}
 }
 
 func TestRemove(t *testing.T) {
@@ -50,7 +34,7 @@ func TestRemove(t *testing.T) {
 	board.Place(OPiece, 0, 0)
 	board.Remove(OPiece, 0, 0)
 	// After removal, should be able to place at same location
-	if !board.Place(OPiece, 0, 0) {
+	if !board.CanPlace(OPiece, 0, 0) {
 		t.Fatal("expected placement after removal to succeed")
 	}
 }
@@ -72,7 +56,7 @@ func TestCanPlace(t *testing.T) {
 
 	for _, test := range testData {
 		t.Run(test.name, func(t *testing.T) {
-			got := board.canPlace(OPiece, test.x, test.y)
+			got := board.CanPlace(OPiece, test.x, test.y)
 			if got != test.expected {
 				t.Errorf("canPlace(%d, %d) = %v, want %v", test.x, test.y, got, test.expected)
 			}

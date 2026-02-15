@@ -26,7 +26,7 @@ func maximumBoardSize(tetrominoCount int) int {
 }
 
 // solve recursively places pieces using backtracking.
-func solve(board tetris.Board, pieces []tetris.Piece) bool {
+func solve(board *tetris.Board, pieces []tetris.Piece) bool {
 	if len(pieces) == 0 {
 		return true
 	}
@@ -37,10 +37,11 @@ func solve(board tetris.Board, pieces []tetris.Piece) bool {
 	// Try all valid positions for the current piece
 	for y := 0; y <= board.Size-current.Height; y++ {
 		for x := 0; x <= board.Size-current.Width; x++ {
-			if !board.Place(current, x, y) {
+			if !board.CanPlace(current, x, y) {
 				continue
 			}
 
+			board.Place(current, x, y)
 			if solve(board, remaining) {
 				return true
 			}
@@ -61,7 +62,7 @@ func FindSmallestSquare(tetrominoes []tetris.Piece) tetris.Board {
 	for size := minSize; size <= maxSize; size++ {
 		board := tetris.NewBoard(uint(size))
 
-		if solve(board, tetrominoes) {
+		if solve(&board, tetrominoes) {
 			return board
 		}
 	}

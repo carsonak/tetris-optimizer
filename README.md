@@ -20,7 +20,7 @@ go build -o tetris-optimizer .
 Each tetromino must be represented as a 4×4 grid where:
 
 - `#` represents a block
-- `.` or space (` `) represents an empty cell
+- `.` represents an empty cell
 - Tetrominoes are separated by blank lines
 
 **Valid Example:**
@@ -44,13 +44,13 @@ Each tetromino is validated for:
 - Exactly 4 blocks (`#`)
 - Orthogonal connectivity (valid tetromino shape)
 - 4×4 grid format
-- Valid characters only (`#`, `.`, space)
+- Valid characters only (`#` or `.`)
 
 Supports up to 26 tetrominoes (A-Z).
 
 ## Output
 
-Prints the solution board with each tetromino labeled by a unique letter:
+Prints the solution board with each tetromino labelled by a unique letter:
 
 ```text
 ABBBB.
@@ -105,5 +105,5 @@ Common issues: invalid file, invalid format/shape, too many pieces (>26).
 ## Implementation Details
 
 **Piece Normalization**: Top-left block at (0,0) reduces search space.
-**Neighbor Validation**: Total neighbor count of 6 or 8 ensures connected shape.
+**Neighbour Validation**: Total neighbour count of 6 or 8 ensures connected shape.
 **Board Operations**: `Place()`, `Remove()`, `ToString()`

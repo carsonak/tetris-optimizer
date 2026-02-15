@@ -7,30 +7,30 @@ import (
 
 // Board is a square grid for placing tetrominoes.
 type Board struct {
-	board [][]rune
 	Size  int // Width and height of the square board
+	board [][]byte
 }
 
 // NewBoard creates a new empty square board.
 func NewBoard(size uint) Board {
-	board := Board{
+	b := Board{
 		Size:  int(size),
-		board: make([][]rune, size),
+		board: make([][]byte, size),
 	}
 
-	for i := range board.Size {
-		board.board[i] = slices.Repeat([]rune{'.'}, board.Size)
+	// Allocate all the memory for the slice in one go,
+	// this improves cache locality
+	backingMem := slices.Repeat([]byte{'.'}, b.Size*b.Size)
+
+	for i := range b.Size {
+		b.board[i] = backingMem[i*b.Size : (i+1)*b.Size]
 	}
 
-	return board
+	return b
 }
 
-// canPlace checks if a piece fits at the given position.
-func (b Board) canPlace(tet Piece, x int, y int) bool {
-	if x >= b.Size || y >= b.Size {
-		return false
-	}
-
+// CanPlace checks if a piece fits at the given position.
+func (b *Board) CanPlace(tet Piece, x, y int) bool {
 	if x+tet.Width > b.Size || y+tet.Height > b.Size {
 		return false
 	}
@@ -45,21 +45,15 @@ func (b Board) canPlace(tet Piece, x int, y int) bool {
 	return true
 }
 
-// Place places a piece on the board (returns false if placement fails).
-func (b Board) Place(tet Piece, x int, y int) bool {
-	if !b.canPlace(tet, x, y) {
-		return false
-	}
-
+// Place places a piece on the board.
+func (b *Board) Place(tet Piece, x int, y int) {
 	for _, p := range tet.Pos {
 		b.board[y+p.Y][x+p.X] = tet.ID
 	}
-
-	return true
 }
 
 // Remove clears a piece from the board (used for backtracking).
-func (b Board) Remove(tet Piece, x int, y int) {
+func (b *Board) Remove(tet Piece, x, y int) {
 	for _, p := range tet.Pos {
 		if b.board[y+p.Y][x+p.X] == tet.ID {
 			b.board[y+p.Y][x+p.X] = '.'
@@ -73,7 +67,7 @@ func (b Board) ToString() string {
 
 	for _, row := range b.board {
 		for _, r := range row {
-			str.WriteRune(r)
+			str.WriteByte(r)
 		}
 
 		str.WriteRune('\n')

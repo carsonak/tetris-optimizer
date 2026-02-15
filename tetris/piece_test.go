@@ -15,14 +15,14 @@ func makeRaw(t *testing.T, rows ...string) RawPiece {
 	var grid RawPiece
 
 	for y, rowStr := range rows {
-		copy(grid[y][:], []rune(rowStr))
+		copy(grid[y][:], []byte(rowStr))
 	}
 
 	return grid
 }
 
 // Helper to create the expected Piece struct manually
-func makePiece(id rune, w, h int, coords ...Point) Piece {
+func makePiece(id byte, w, h int, coords ...Point) Piece {
 	var pos [4]Point
 
 	copy(pos[:], coords)
@@ -38,7 +38,7 @@ func TestInit(t *testing.T) {
 	testData := []struct {
 		name      string
 		raw       RawPiece
-		tetID     rune
+		tetID     byte
 		want      Piece
 		expectErr bool
 		errMsg    string

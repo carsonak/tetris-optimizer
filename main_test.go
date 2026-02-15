@@ -21,7 +21,7 @@ func TestInitTetrominoPieces(t *testing.T) {
 	var rawI tetris.RawPiece
 
 	for i := range 4 {
-		copy(rawI[i][:], []rune("#..."))
+		copy(rawI[i][:], []byte("#..."))
 	}
 
 	t.Run("At limit", func(t *testing.T) {
@@ -34,7 +34,7 @@ func TestInitTetrominoPieces(t *testing.T) {
 			t.Fatalf("expected 26 pieces, got %d", len(pieces))
 		}
 
-		id := 'A'
+		id := byte('A')
 		for _, p := range pieces {
 			if p.ID != id {
 				t.Fatalf("expected ID: %c, got: %c", id, p.ID)

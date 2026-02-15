@@ -53,7 +53,8 @@ func TestMaximumBoardSize(t *testing.T) {
 
 func TestSolveEmptyList(t *testing.T) {
 	board := tetris.NewBoard(4)
-	if !solve(board, []tetris.Piece{}) {
+
+	if !solve(&board, []tetris.Piece{}) {
 		t.Fatal("expected solve to succeed with empty piece list")
 	}
 }
@@ -91,7 +92,7 @@ func TestSolve(t *testing.T) {
 
 	for _, test := range testData {
 		t.Run(test.name, func(t *testing.T) {
-			output := solve(test.board, []tetris.Piece{test.piece})
+			output := solve(&test.board, []tetris.Piece{test.piece})
 			if output != test.expected {
 				t.Fatalf(
 					"expected solve(board(%d), {piece(W: %d, H: %d)}) == '%v', got '%v'",
@@ -105,7 +106,7 @@ func TestSolve(t *testing.T) {
 func TestFindSmallestSquare(t *testing.T) {
 	// Create a simple 2x2 piece
 	piece := tetris.Piece{
-		Pos:    [4]tetris.Point{{0, 0}, {1, 0}, {0, 1}, {1, 1}},
+		Pos:    [4]tetris.Point{{X: 0, Y: 0}, {X: 1, Y: 0}, {X: 0, Y: 1}, {X: 1, Y: 1}},
 		Width:  2,
 		Height: 2,
 		ID:     'A',

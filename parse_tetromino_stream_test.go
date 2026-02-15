@@ -9,7 +9,7 @@ import (
 	"tetris-optimizer/tetris"
 )
 
-func makeRaw(char rune) tetris.RawPiece {
+func makeRaw(char byte) tetris.RawPiece {
 	var tet tetris.RawPiece
 
 	for y := range 4 {
@@ -21,8 +21,8 @@ func makeRaw(char rune) tetris.RawPiece {
 	return tet
 }
 
-func makeBlock(r rune) string {
-	s := string([]rune{r})
+func makeBlock(r byte) string {
+	s := string([]byte{r})
 	line := strings.Repeat(s, 4) + "\n"
 
 	return strings.Repeat(line, 4)

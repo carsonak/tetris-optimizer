@@ -7,7 +7,7 @@ import (
 )
 
 // RawPiece is an unvalidated 4×4 tetromino grid.
-type RawPiece [4][4]rune
+type RawPiece [4][4]byte
 
 // Point represents a 2D coordinate (0-indexed, origin at top-left).
 type Point struct {
@@ -16,10 +16,10 @@ type Point struct {
 
 // Piece is a validated, normalized tetromino with blocks, dimensions, and ID.
 type Piece struct {
-	Pos    [4]Point // Relative coordinates of the 4 blocks
 	Width  int
 	Height int
-	ID     rune // Character to print (A, B, C, ...)
+	ID     byte     // Character to print (A, B, C, ...)
+	Pos    [4]Point // Relative coordinates of the 4 blocks
 }
 
 //////////////////// STATIC FUNCTIONS ////////////////////
@@ -84,7 +84,7 @@ func (t *Piece) normalize() {
 //////////////////// PUBLIC METHODS ////////////////////
 
 // Init validates and normalizes a RawPiece (4 blocks, neighbour count 6 or 8).
-func Init(rawTet RawPiece, id rune) (Piece, error) {
+func Init(rawTet RawPiece, id byte) (Piece, error) {
 	var tet Piece
 	neighbours := 0
 	blockCount := 0

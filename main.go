@@ -18,7 +18,7 @@ func initTetrominoPieces(rawTetrominoes []tetris.RawPiece) ([]tetris.Piece, erro
 	}
 
 	var pieces []tetris.Piece
-	id := 'A'
+	id := byte('A')
 
 	for _, raw := range rawTetrominoes {
 		p, err := tetris.Init(raw, id)
@@ -36,7 +36,7 @@ func initTetrominoPieces(rawTetrominoes []tetris.RawPiece) ([]tetris.Piece, erro
 // main parses input file, validates tetrominoes, and prints the solution.
 func main() {
 	if len(os.Args) != 2 {
-		fmt.Fprintf(os.Stderr, "ERROR: USAGE: %s tetromino_file", os.Args[0])
+		fmt.Fprintf(os.Stderr, "ERROR: USAGE: %s tetromino_file\n", os.Args[0])
 		os.Exit(1)
 	}
 

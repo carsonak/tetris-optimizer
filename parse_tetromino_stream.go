@@ -45,7 +45,7 @@ func ParseTetrominoStream(scanner *bufio.Scanner) (pieces []tetris.RawPiece, err
 			return nil, errors.New("invalid file format; Tetromino should have 4 columns")
 		}
 
-		copy(current[rowCount][:], []rune(line))
+		copy(current[rowCount][:], []byte(line))
 		rowCount++
 	}
 
