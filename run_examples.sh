@@ -3,9 +3,9 @@
 set -o nounset -o pipefail
 
 # Configuration & Defaults
-BAD_DIR="bad_examples"
-GOOD_DIR="good_examples"
-SAMPLES_DIR="samples"
+BAD_DIR="tests/bad_examples"
+GOOD_DIR="tests/good_examples"
+SAMPLES_DIR="tests/samples"
 
 # Flags
 USE_COLOR=true
@@ -23,7 +23,7 @@ RESET='\033[0m' # Reset Terminal
 
 print_help() {
     cat << EOF
-USAGE: ./run_tests [OPTIONS] <executable>
+USAGE: $0 [OPTIONS] <executable>
    Runs tests on the given executable.
 
 OPTIONS
@@ -115,8 +115,8 @@ log_info() {
 
 log_header() {
     if [[ "$USE_COLOR" = true ]]
-    then echo -e "\n${BLUE}--- $1 ---${RESET}"
-    else echo -e "\n--- $1 ---"
+    then echo -e "${BLUE}--- $1 ---${RESET}"
+    else echo -e "--- $1 ---"
     fi
 }
 

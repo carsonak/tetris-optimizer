@@ -93,7 +93,8 @@ tetris-optimizer/
 ```bash
 go test ./...                  # Run unit tests
 go test -cover ./...           # With coverage
-cd tests && ./run_tests.sh     # Run example tests
+# Run example tests
+go build -o tetris-optimizer . && ./run_examples.sh ./tetris-optimizer
 ```
 
 ## Error Handling
